@@ -28,22 +28,28 @@ def display_board
   }
 end
 
-player = "B"
-#choose a column to drop a piece into (0-6)
-col = 2
-$board[37] = "R" #testing
+def choose(player)
+  done=false
+  until done do
 
-# if row 0 is full, prompt for a different column
-puts "column is full" if $board[col]
+    puts "Player "+player+", choose a column (0-"+($cols-1).to_s+")"
+    col = gets.chomp.to_i
 
-#find the lowest empty row in that column
-#do this "upside down" so all I have to find is the first empty position.
-($rows-1).downto(0).each { |row|
-  i = $cols*row + col
-  if !$board[i] then
-    $board[i] = player
-    break
+    # if row 0 is full, prompt for a different column
+    puts "column is full" if $board[col]
+
+    #find the lowest empty row in that column
+    #do this "upside down" so all I have to find is the first empty position.
+    ($rows-1).downto(0).each { |row|
+      i = $cols*row + col
+      if !$board[i] then $board[i] = player; done=true; break end
+    }
   end
-}
+end
 
+#play a single round
+display_board
+choose("B")
+display_board
+choose("R")
 display_board
