@@ -4,8 +4,7 @@
 # Connect Four game 
 
 #initialize game board array
-rows = 6
-cols = 7
+rows, cols = 6, 7
 board = Array.new(rows*cols)
 
 #display the board, visualizing single array as rows and columns
