@@ -7,9 +7,9 @@
 $rows, $cols = 6, 7
 #$board = Array.new($rows*$cols)
 $board = [nil,nil,nil,nil,nil,nil,nil,
-          "R","B","R","B","R","B","R",
-          "B","R","B","R","B","R","B",
-          "R","B","R","B","R","B","R",
+          nil,nil,nil,nil,nil,nil,nil,
+          "B","R","B","R","R","R","B",
+          "R","B","B","R","R","B","R",
           "B","R","B","R","B","R","B",
           "R","B","R","B","R","B","R" ]
 
@@ -95,7 +95,7 @@ def check_board
   r,c = $last_move[:row], $last_move[:col]
   puts "Last Move was " + $board[index(r,c)] + " at " + $last_move[:row].to_s + " " + $last_move[:col].to_s
 
-  to_check = neighbors(r,c).compact!
+  to_check = neighbors(r,c).compact
   for neighbor in to_check
     puts "Checking whether " + neighbor.to_s + " " + $board[neighbor[:pos]].to_s + " matches " + $board[index(r,c)].to_s
   end
