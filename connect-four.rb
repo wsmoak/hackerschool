@@ -13,6 +13,8 @@ $board = [nil,nil,nil,nil,nil,nil,nil,
           "B","R","B","R","B","R","B",
           "R","B","R","B","R","B","R" ]
 
+$last_move = {row: nil, col: nil}
+
 #display the board, visualizing single array as rows and columns
 (0...$rows).each { |row|
   (0...$cols).each { |col|
@@ -50,6 +52,7 @@ def choose(player)
       i = $cols*row + col
       if !$board[i] then
         $board[i] = player
+        $last_move = {row: row, col: col}
         done=true
         break
       end
@@ -57,9 +60,24 @@ def choose(player)
   end
 end
 
+def index (row, col)
+  if (0...$rows).member? row
+    if (0...$cols).member? col
+      $cols*row + col
+    end
+  end
+end
+
 def check_board
 
-  #TODO check for a winner
+  #check for a winner
+  #start from the last move, and look out in all directions for the same color
+  puts "Last Move was " + $last_move[:row].to_s + " " + $last_move[:col].to_s
+  r,c = $last_move[:row], $last_move[:col]
+  neighbors = [index(r-1,c-1), index(r-1,c), index(r-1,c+1),
+               index(r,c-1),                 index(r,c+1),
+               index(r+1,c-1),  index(r+1,c), index(r+1,c+1) ]
+  puts "neighbors are: " + neighbors.compact.to_s
 
   #if we don't have a winner at this point, and all the spaces are filled (not nil), then it's a tie
   if $board.all?
