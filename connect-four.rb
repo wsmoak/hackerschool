@@ -5,7 +5,13 @@
 
 #initialize game board array
 $rows, $cols = 6, 7
-$board = Array.new($rows*$cols)
+#$board = Array.new($rows*$cols)
+$board = [nil,nil,nil,nil,nil,nil,nil,
+          "R","B","R","B","R","B","R",
+          "B","R","B","R","B","R","B",
+          "R","B","R","B","R","B","R",
+          "B","R","B","R","B","R","B",
+          "R","B","R","B","R","B","R" ]
 
 #display the board, visualizing single array as rows and columns
 (0...$rows).each { |row|
@@ -36,20 +42,43 @@ def choose(player)
     col = gets.chomp.to_i
 
     # if row 0 is full, prompt for a different column
-    puts "column is full" if $board[col]
+    if $board[col] then puts "column is full"; redo end
 
     #find the lowest empty row in that column
     #do this "upside down" so all I have to find is the first empty position.
     ($rows-1).downto(0).each { |row|
       i = $cols*row + col
-      if !$board[i] then $board[i] = player; done=true; break end
+      if !$board[i] then
+        $board[i] = player
+        done=true
+        break
+      end
     }
   end
 end
 
-#play a single round
+def check_board
+
+  #TODO check for a winner
+
+  #if we don't have a winner at this point, and all the spaces are filled (not nil), then it's a tie
+  if $board.all?
+    puts "It's a tie!"
+    exit
+  end
+end
+
+def play
+  loop do
+    choose("B")
+    display_board
+    check_board
+
+    choose("R")
+    display_board
+    check_board
+  end
+end
+
 display_board
-choose("B")
-display_board
-choose("R")
-display_board
+play
