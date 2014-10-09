@@ -68,16 +68,38 @@ def index (row, col)
   end
 end
 
-def check_board
+def neighbors_index (r, c)
+  [index(r-1,c-1), index(r-1,c), index(r-1,c+1),
+   index(r,c-1),                 index(r,c+1),
+   index(r+1,c-1), index(r+1,c), index(r+1,c+1) ]
+end
 
+def position (r,c)
+  if (0...$rows).member? r
+    if (0...$cols).member? c
+      {row: r, col: c, pos: $cols*r + c}
+    end
+  end
+end
+
+def neighbors (r, c)
+  [ position(r-1,c-1), position(r-1,c), position(r-1,c+1),
+    position(r,c-1),                    position(r,c+1),
+    position(r+1,c-1), position(r+1,c), position(r+1,c+1) ]
+end
+
+def check_board
   #check for a winner
   #start from the last move, and look out in all directions for the same color
-  puts "Last Move was " + $last_move[:row].to_s + " " + $last_move[:col].to_s
+
   r,c = $last_move[:row], $last_move[:col]
-  neighbors = [index(r-1,c-1), index(r-1,c), index(r-1,c+1),
-               index(r,c-1),                 index(r,c+1),
-               index(r+1,c-1),  index(r+1,c), index(r+1,c+1) ]
-  puts "neighbors are: " + neighbors.compact.to_s
+  puts "Last Move was " + $board[index(r,c)] + " at " + $last_move[:row].to_s + " " + $last_move[:col].to_s
+
+  to_check = neighbors(r,c).compact!
+  for neighbor in to_check
+    puts "Checking whether " + neighbor.to_s + " " + $board[neighbor[:pos]].to_s + " matches " + $board[index(r,c)].to_s
+  end
+  #TODO:  switch to symbols in the board to make testing for equality easier
 
   #if we don't have a winner at this point, and all the spaces are filled (not nil), then it's a tie
   if $board.all?
