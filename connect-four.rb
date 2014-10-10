@@ -82,14 +82,16 @@ def neighbors (r, c)
     position(r+1,c-1), position(r+1,c), position(r+1,c+1) ].compact
 end
 
-# look right or left (direction of +1 or -1) and count the number of matching squares
-def find_row_match(r, c, direction)
+# look right, left, up, or down (direction of +1 or -1) and count the number of matching squares
+def find_match(r, c, row_dir, col_dir)
   count = 0
   match = true
+  row = r
   col = c
   while match do
-    col += direction # move over
-    square = position(r,col)
+    col += col_dir # move over
+    row += row_dir # move up or down
+    square = position(row,col)
     if square && $board[square[:pos]] == $board[index(r,c)] then
       count += 1
     else
@@ -101,17 +103,23 @@ end
 
 def check_board
   #check for a winner
-  #start from the last move, and look out in all directions for the same color
-
-  puts "Game Board array is " + $board.inspect
+  #start from the last move, and look in all directions for the same color
 
   r,c = $last_move[:row], $last_move[:col]
   puts "Last Move was " + $board[index(r,c)].to_s + " at " + $last_move[:row].to_s + " " + $last_move[:col].to_s
 
   #from the last move, look to the left and right and count matches
   count = 1 # self
-  count += find_row_match(r,c,1) # to the right
-  count += find_row_match(r,c,-1) # to the left
+  count += find_match(r,c,0,1) # to the right
+  count += find_match(r,c,0,-1) # to the left
+  if count >= 4 then
+    puts "Winner is " + $board[index(r,c)].to_s
+    exit
+  end
+
+  count = 1 #self
+  count += find_match(r,c,1,0) # up TODO:  why would you need to look UP from the last move?
+  count += find_match(r,c,-1,0) #down
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
