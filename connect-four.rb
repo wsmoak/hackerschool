@@ -118,8 +118,21 @@ def check_board
   end
 
   count = 1 #self
-  count += find_match(r,c,1,0) # up TODO:  why would you need to look UP from the last move?
   count += find_match(r,c,-1,0) #down
+  if count >= 4 then
+    puts "Winner is " + $board[index(r,c)].to_s
+    exit
+  end
+
+  count = 1 #self
+  count += find_match(r,c,-1, 1) # down & to the right
+  if count >= 4 then
+    puts "Winner is " + $board[index(r,c)].to_s
+    exit
+  end
+
+  count = 1 #self
+  count += find_match(r,c,-1,-1) # down & to the left
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
