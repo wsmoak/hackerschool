@@ -126,6 +126,7 @@ def check_board
 
   count = 1 #self
   count += find_match(r,c,-1, 1) # down & to the right
+  count += find_match(r,c, 1,-1) # up & to the left
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
@@ -133,6 +134,7 @@ def check_board
 
   count = 1 #self
   count += find_match(r,c,-1,-1) # down & to the left
+  count += find_match(r,c, 1, 1) # up & to the right
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
