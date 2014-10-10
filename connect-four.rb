@@ -10,6 +10,7 @@ $board = Array.new($rows*$cols)
 $last_move = {row: nil, col: nil}
 
 #display the board, visualizing single array as rows and columns
+def visualize_array
 (0...$rows).each { |row|
   (0...$cols).each { |col|
     print row.to_s + " " + col.to_s + " "
@@ -17,8 +18,7 @@ $last_move = {row: nil, col: nil}
   }
   puts
 }
-
-puts
+end
 
 def display_board
   (0...$rows).each { |row|
@@ -54,6 +54,7 @@ def choose(player)
   end
 end
 
+# returns the index into the array, or nil if the position is not on the board
 def index (row, col)
   if (0...$rows).member? row
     if (0...$cols).member? col
@@ -62,12 +63,7 @@ def index (row, col)
   end
 end
 
-def neighbors_index (r, c)
-  [index(r-1,c-1), index(r-1,c), index(r-1,c+1),
-   index(r,c-1),                 index(r,c+1),
-   index(r+1,c-1), index(r+1,c), index(r+1,c+1) ]
-end
-
+# returns a hash with the row, column and array index, or nil if the position is not on the board
 def position (r,c)
   if (0...$rows).member? r
     if (0...$cols).member? c
@@ -76,20 +72,14 @@ def position (r,c)
   end
 end
 
-def neighbors (r, c)
-  [ position(r-1,c-1), position(r-1,c), position(r-1,c+1),
-    position(r,c-1),                    position(r,c+1),
-    position(r+1,c-1), position(r+1,c), position(r+1,c+1) ].compact
-end
-
-# look right, left, up, or down (direction of +1 or -1) and count the number of matching squares
+# look right, left, up, down or diagonally (direction of +1 or -1) and count the number of matching squares
 def find_match(r, c, row_dir, col_dir)
   count = 0
   match = true
   row = r
   col = c
   while match do
-    col += col_dir # move over
+    col += col_dir # move right or left
     row += row_dir # move up or down
     square = position(row,col)
     if square && $board[square[:pos]] == $board[index(r,c)] then
@@ -117,6 +107,7 @@ def check_board
     exit
   end
 
+  #look down the same column as the last move (there can't be anything above it)
   count = 1 #self
   count += find_match(r,c,-1,0) #down
   if count >= 4 then
@@ -124,6 +115,7 @@ def check_board
     exit
   end
 
+  # look on the \ diagonal
   count = 1 #self
   count += find_match(r,c,-1, 1) # down & to the right
   count += find_match(r,c, 1,-1) # up & to the left
@@ -132,6 +124,7 @@ def check_board
     exit
   end
 
+  # look on the / diagonal
   count = 1 #self
   count += find_match(r,c,-1,-1) # down & to the left
   count += find_match(r,c, 1, 1) # up & to the right
