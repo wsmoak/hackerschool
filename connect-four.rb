@@ -91,29 +91,40 @@ def check_board
   r,c = $last_move[:row], $last_move[:col]
   puts "Last Move was " + $board[index(r,c)].to_s + " at " + $last_move[:row].to_s + " " + $last_move[:col].to_s
 
-#TODO: Fix algorithm, this one is wrong.  (Detects a win with two adjacent spaces, allows L-shaped paths, etc.)
-
-  level1 = neighbors(r,c)
-  for x in level1
-    puts "Checking whether " + x.to_s + " " + $board[ x[:pos]].to_s + " matches " + $board[index(r,c)].to_s
-    if $board[ x[:pos] ] && ( $board[ x[:pos]] == $board[index(r,c)] ) then
-      puts "Level 1 Match!"
-      level2 = neighbors( x[:row], x[:col] )
-      puts "Now look at..." + level2.inspect
-      for y in level2
-        if $board[ y[:pos] ] && ( $board[ y[:pos]] == $board[index(r,c)] ) then
-          puts "Level 2 Match!"
-          level3 = neighbors( y[:row], y[:col] )
-          puts "Now look at... " + level3.inspect
-          for z in level3
-            if $board[ z[:pos]] && ( $board[ z[:pos]] == $board[index(r,c)] ) then
-              puts "Level 3 Match! -- WINNER IS " + $board[index(r,c)].to_s
-              exit
-            end
-          end
-        end
-      end
+  #from the last move, look to the left and right and count matches
+  count = 1 # last move
+  match = true
+  col = c
+  while match do
+    col -= 1
+    left = position(r,col)
+    puts "left is " + left.inspect
+    if left && $board[left[:pos]] == $board[index(r,c)] then
+      puts "Match to the left!"
+      count += 1
+    else
+      match = false
     end
+  end
+  puts "Count is " + count.to_s
+  match = true
+  col = c
+  while match do
+    col += 1
+    right = position(r,col)
+    puts "right is " + right.inspect
+    if right && $board[right[:pos]] == $board[index(r,c)] then
+      puts "Match to the right!"
+      count += 1
+    else
+      match = false
+    end
+    puts "Count is " + count.to_s
+  end
+
+  if count >= 4 then
+    puts "Winner is " + $board[index(r,c)].to_s
+    exit
   end
 
   #if we don't have a winner at this point, and all the spaces are filled (not nil), then it's a tie
