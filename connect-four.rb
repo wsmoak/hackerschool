@@ -82,6 +82,23 @@ def neighbors (r, c)
     position(r+1,c-1), position(r+1,c), position(r+1,c+1) ].compact
 end
 
+# look right or left (direction of +1 or -1) and count the number of matching squares
+def find_row_match(r, c, direction)
+  count = 0
+  match = true
+  col = c
+  while match do
+    col += direction # move over
+    square = position(r,col)
+    if square && $board[square[:pos]] == $board[index(r,c)] then
+      count += 1
+    else
+      match = false
+    end
+  end
+  return count
+end
+
 def check_board
   #check for a winner
   #start from the last move, and look out in all directions for the same color
@@ -92,36 +109,9 @@ def check_board
   puts "Last Move was " + $board[index(r,c)].to_s + " at " + $last_move[:row].to_s + " " + $last_move[:col].to_s
 
   #from the last move, look to the left and right and count matches
-  count = 1 # last move
-  match = true
-  col = c
-  while match do
-    col -= 1
-    left = position(r,col)
-    puts "left is " + left.inspect
-    if left && $board[left[:pos]] == $board[index(r,c)] then
-      puts "Match to the left!"
-      count += 1
-    else
-      match = false
-    end
-  end
-  puts "Count is " + count.to_s
-  match = true
-  col = c
-  while match do
-    col += 1
-    right = position(r,col)
-    puts "right is " + right.inspect
-    if right && $board[right[:pos]] == $board[index(r,c)] then
-      puts "Match to the right!"
-      count += 1
-    else
-      match = false
-    end
-    puts "Count is " + count.to_s
-  end
-
+  count = 1 # self
+  count += find_row_match(r,c,1) # to the right
+  count += find_row_match(r,c,-1) # to the left
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
