@@ -5,13 +5,7 @@
 
 #initialize game board array
 $rows, $cols = 6, 7
-#$board = Array.new($rows*$cols)
-$board = [nil,nil,nil,nil,nil,nil,nil,
-          nil,nil,nil,nil,nil,nil,nil,
-          "B","R","B","R","R","R","B",
-          "R","B","B","R","R","B","R",
-          "B","R","B","R","B","R","B",
-          "R","B","R","B","R","B","R" ]
+$board = Array.new($rows*$cols)
 
 $last_move = {row: nil, col: nil}
 
@@ -30,7 +24,7 @@ def display_board
   (0...$rows).each { |row|
     (0...$cols).each { |col|
       i = $cols*row + col
-      print $board[i] ? $board[i] + "  " : ".  "
+      print $board[i] ? $board[i].to_s + "  " : ".  "
     }
     puts
   }
@@ -40,11 +34,11 @@ def choose(player)
   done=false
   until done do
 
-    puts "Player "+player+", choose a column (0-"+($cols-1).to_s+")"
+    puts "Player "+player.to_s+", choose a column (0-"+($cols-1).to_s+")"
     col = gets.chomp.to_i
 
-    # if row 0 is full, prompt for a different column
-    if $board[col] then puts "column is full"; redo end
+    # if row 0 for that column is filled in, prompt for a different column
+    if $board[col] then puts "column is full"; redo; end
 
     #find the lowest empty row in that column
     #do this "upside down" so all I have to find is the first empty position.
@@ -85,21 +79,42 @@ end
 def neighbors (r, c)
   [ position(r-1,c-1), position(r-1,c), position(r-1,c+1),
     position(r,c-1),                    position(r,c+1),
-    position(r+1,c-1), position(r+1,c), position(r+1,c+1) ]
+    position(r+1,c-1), position(r+1,c), position(r+1,c+1) ].compact
 end
 
 def check_board
   #check for a winner
   #start from the last move, and look out in all directions for the same color
 
-  r,c = $last_move[:row], $last_move[:col]
-  puts "Last Move was " + $board[index(r,c)] + " at " + $last_move[:row].to_s + " " + $last_move[:col].to_s
+  puts "Game Board array is " + $board.inspect
 
-  to_check = neighbors(r,c).compact
-  for neighbor in to_check
-    puts "Checking whether " + neighbor.to_s + " " + $board[neighbor[:pos]].to_s + " matches " + $board[index(r,c)].to_s
+  r,c = $last_move[:row], $last_move[:col]
+  puts "Last Move was " + $board[index(r,c)].to_s + " at " + $last_move[:row].to_s + " " + $last_move[:col].to_s
+
+#TODO: Fix algorithm, this one is wrong.  (Detects a win with two adjacent spaces, allows L-shaped paths, etc.)
+
+  level1 = neighbors(r,c)
+  for x in level1
+    puts "Checking whether " + x.to_s + " " + $board[ x[:pos]].to_s + " matches " + $board[index(r,c)].to_s
+    if $board[ x[:pos] ] && ( $board[ x[:pos]] == $board[index(r,c)] ) then
+      puts "Level 1 Match!"
+      level2 = neighbors( x[:row], x[:col] )
+      puts "Now look at..." + level2.inspect
+      for y in level2
+        if $board[ y[:pos] ] && ( $board[ y[:pos]] == $board[index(r,c)] ) then
+          puts "Level 2 Match!"
+          level3 = neighbors( y[:row], y[:col] )
+          puts "Now look at... " + level3.inspect
+          for z in level3
+            if $board[ z[:pos]] && ( $board[ z[:pos]] == $board[index(r,c)] ) then
+              puts "Level 3 Match! -- WINNER IS " + $board[index(r,c)].to_s
+              exit
+            end
+          end
+        end
+      end
+    end
   end
-  #TODO:  switch to symbols in the board to make testing for equality easier
 
   #if we don't have a winner at this point, and all the spaces are filled (not nil), then it's a tie
   if $board.all?
@@ -110,11 +125,11 @@ end
 
 def play
   loop do
-    choose("B")
+    choose(:B)
     display_board
     check_board
 
-    choose("R")
+    choose(:R)
     display_board
     check_board
   end
