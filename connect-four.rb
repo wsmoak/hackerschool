@@ -9,7 +9,7 @@ $board = Array.new($rows*$cols)
 
 $last_move = {row: nil, col: nil}
 
-UP, DOWN, LEFT, RIGHT = 1, -1, -1, 1
+UP, DOWN, LEFT, RIGHT = -1, 1, -1, 1
 
 #display the board, visualizing single array as rows and columns
 def visualize_array
