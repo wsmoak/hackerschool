@@ -4,8 +4,8 @@
 # Connect Four game 
 
 #initialize game board array
-$rows, $cols = 6, 7
-$board = Array.new($rows*$cols)
+ROWS, COLS = 6, 7
+$board = Array.new(ROWS*COLS)
 
 $last_move = {row: nil, col: nil}
 
@@ -13,19 +13,19 @@ UP, DOWN, LEFT, RIGHT = -1, 1, -1, 1
 
 #display the board, visualizing single array as rows and columns
 def visualize_array
-(0...$rows).each { |row|
-  (0...$cols).each { |col|
+(0...ROWS).each { |row|
+  (0...COLS).each { |col|
     print row.to_s + " " + col.to_s + " "
-    print "("  +  ($cols*row + col).to_s + ")   " # index into board array
+    print "("  +  (COLS*row + col).to_s + ")   " # index into board array
   }
   puts
 }
 end
 
 def display_board
-  (0...$rows).each { |row|
-    (0...$cols).each { |col|
-      i = $cols*row + col
+  (0...ROWS).each { |row|
+    (0...COLS).each { |col|
+      i = COLS*row + col
       print $board[i] ? $board[i].to_s + "  " : ".  "
     }
     puts
@@ -36,7 +36,7 @@ def choose(player)
   done=false
   until done do
 
-    puts "Player "+player.to_s+", choose a column (0-"+($cols-1).to_s+")"
+    puts "Player "+player.to_s+", choose a column (0-"+(COLS-1).to_s+")"
     col = gets.chomp.to_i
 
     # if row 0 for that column is filled in, prompt for a different column
@@ -44,8 +44,8 @@ def choose(player)
 
     #find the lowest empty row in that column
     #do this "upside down" so all I have to find is the first empty position.
-    ($rows-1).downto(0).each do |row|
-      i = $cols*row + col
+    (ROWS-1).downto(0).each do |row|
+      i = COLS*row + col
       if !$board[i] then
         $board[i] = player
         $last_move = {row: row, col: col}
@@ -58,18 +58,18 @@ end
 
 # returns the index into the array, or nil if the position is not on the board
 def index (row, col)
-  if (0...$rows).member? row
-    if (0...$cols).member? col
-      $cols*row + col
+  if (0...ROWS).member? row
+    if (0...COLS).member? col
+      COLS*row + col
     end
   end
 end
 
 # returns a hash with the row, column and array index, or nil if the position is not on the board
 def position (r,c)
-  if (0...$rows).member? r
-    if (0...$cols).member? c
-      {row: r, col: c, pos: $cols*r + c}
+  if (0...ROWS).member? r
+    if (0...COLS).member? c
+      {row: r, col: c, pos: COLS*r + c}
     end
   end
 end
