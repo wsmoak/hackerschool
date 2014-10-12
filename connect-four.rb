@@ -44,7 +44,7 @@ def choose(player)
 
     #find the lowest empty row in that column
     #do this "upside down" so all I have to find is the first empty position.
-    ($rows-1).downto(0).each { |row|
+    ($rows-1).downto(0).each do |row|
       i = $cols*row + col
       if !$board[i] then
         $board[i] = player
@@ -52,7 +52,7 @@ def choose(player)
         done=true
         break
       end
-    }
+    end
   end
 end
 
@@ -118,8 +118,8 @@ def check_board
 
   # look on the \ diagonal
   count = 1 #self
-  count += find_match(r,c,DOWN,RIGHT) # down & to the right
-  count += find_match(r,c,UP,LEFT) # up & to the left
+  count += find_match(r,c,DOWN,RIGHT)
+  count += find_match(r,c,UP,LEFT)
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
@@ -127,8 +127,8 @@ def check_board
 
   # look on the / diagonal
   count = 1 #self
-  count += find_match(r,c,DOWN,LEFT) # down & to the left
-  count += find_match(r,c,UP,RIGHT) # up & to the right
+  count += find_match(r,c,DOWN,LEFT)
+  count += find_match(r,c,UP,RIGHT)
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
