@@ -9,6 +9,8 @@ $board = Array.new($rows*$cols)
 
 $last_move = {row: nil, col: nil}
 
+UP, DOWN, LEFT, RIGHT = 1, -1, -1, 1
+
 #display the board, visualizing single array as rows and columns
 def visualize_array
 (0...$rows).each { |row|
@@ -96,12 +98,11 @@ def check_board
   #start from the last move, and look in all directions for the same color
 
   r,c = $last_move[:row], $last_move[:col]
-  puts "Last Move was " + $board[index(r,c)].to_s + " at " + $last_move[:row].to_s + " " + $last_move[:col].to_s
 
   #from the last move, look to the left and right and count matches
   count = 1 # self
-  count += find_match(r,c,0,1) # to the right
-  count += find_match(r,c,0,-1) # to the left
+  count += find_match(r,c,0,RIGHT)
+  count += find_match(r,c,0,LEFT)
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
@@ -109,7 +110,7 @@ def check_board
 
   #look down the same column as the last move (there can't be anything above it)
   count = 1 #self
-  count += find_match(r,c,-1,0) #down
+  count += find_match(r,c,DOWN,0) #down
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
@@ -117,8 +118,8 @@ def check_board
 
   # look on the \ diagonal
   count = 1 #self
-  count += find_match(r,c,-1, 1) # down & to the right
-  count += find_match(r,c, 1,-1) # up & to the left
+  count += find_match(r,c,DOWN,RIGHT) # down & to the right
+  count += find_match(r,c,UP,LEFT) # up & to the left
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
@@ -126,8 +127,8 @@ def check_board
 
   # look on the / diagonal
   count = 1 #self
-  count += find_match(r,c,-1,-1) # down & to the left
-  count += find_match(r,c, 1, 1) # up & to the right
+  count += find_match(r,c,DOWN,LEFT) # down & to the left
+  count += find_match(r,c,UP,RIGHT) # up & to the right
   if count >= 4 then
     puts "Winner is " + $board[index(r,c)].to_s
     exit
