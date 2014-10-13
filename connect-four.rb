@@ -9,7 +9,8 @@ $board = Array.new(ROWS*COLS)
 
 $last_move = {row: nil, col: nil}
 
-UP, DOWN, LEFT, RIGHT = -1, 1, -1, 1
+UP, DOWN, LEFT, RIGHT, SAME = -1, 1, -1, 1, 0
+WIN = 4
 
 #display the board, visualizing single array as rows and columns
 def visualize_array
@@ -48,7 +49,7 @@ def choose(player)
       i = COLS*row + col
       if !$board[i] then
         $board[i] = player
-        $last_move = {row: row, col: col}
+        $last_move = {row: row, col: col, player: player}
         done=true
         break
       end
@@ -74,17 +75,15 @@ def position (r,c)
   end
 end
 
-# look right, left, up, down or diagonally (direction of +1 or -1) and count the number of matching squares
-def find_match(r, c, row_dir, col_dir)
+def find_match(row_dir, col_dir)
+  row,col = $last_move[:row], $last_move[:col]
   count = 0
   match = true
-  row = r
-  col = c
   while match do
     col += col_dir # move right or left
     row += row_dir # move up or down
     square = position(row,col)
-    if square && $board[square[:pos]] == $board[index(r,c)] then
+    if square && $board[square[:pos]] == $last_move[:player] then
       count += 1
     else
       match = false
@@ -93,52 +92,63 @@ def find_match(r, c, row_dir, col_dir)
   return count
 end
 
-def check_board
-  #check for a winner
-  #start from the last move, and look in all directions for the same color
+def find_row_match
+  find_match(SAME,RIGHT) + find_match(SAME,LEFT)
+end
 
-  r,c = $last_move[:row], $last_move[:col]
+def winner?(count)
+  count + 1 >= WIN
+end
 
-  #from the last move, look to the left and right and count matches
-  count = 1 # self
-  count += find_match(r,c,0,RIGHT)
-  count += find_match(r,c,0,LEFT)
-  if count >= 4 then
-    puts "Winner is " + $board[index(r,c)].to_s
-    exit
-  end
+def last_player
+   $last_move[:player].to_s
+end
 
-  #look down the same column as the last move (there can't be anything above it)
-  count = 1 #self
-  count += find_match(r,c,DOWN,0) #down
-  if count >= 4 then
-    puts "Winner is " + $board[index(r,c)].to_s
-    exit
-  end
+def end_game
+  puts "Winner is " + last_player
+  exit
+end
 
-  # look on the \ diagonal
-  count = 1 #self
-  count += find_match(r,c,DOWN,RIGHT)
-  count += find_match(r,c,UP,LEFT)
-  if count >= 4 then
-    puts "Winner is " + $board[index(r,c)].to_s
-    exit
-  end
+def check_row
+  if winner? find_row_match then end_game end
+end
 
-  # look on the / diagonal
-  count = 1 #self
-  count += find_match(r,c,DOWN,LEFT)
-  count += find_match(r,c,UP,RIGHT)
-  if count >= 4 then
-    puts "Winner is " + $board[index(r,c)].to_s
-    exit
-  end
+def find_column_match
+  find_match(DOWN,SAME)
+end
 
+def check_column
+  puts "Checking column"
+  if winner? find_column_match then end_game end
+end
+
+def find_backward_diagonal_match
+  find_match(DOWN,RIGHT) + find_match(UP,LEFT)
+end
+
+def find_forward_diagonal_match
+  find_match(DOWN,LEFT) + find_match(UP,RIGHT)
+end
+
+def check_diagonals
+  puts "check_diagonals"
+  if winner? find_backward_diagonal_match then end_game end
+  if winner? find_forward_diagonal_match then end_game end
+end
+
+def check_tie
   #if we don't have a winner at this point, and all the spaces are filled (not nil), then it's a tie
   if $board.all?
     puts "It's a tie!"
     exit
   end
+end
+
+def check_board
+  check_row
+  check_column
+  check_diagonals
+  check_tie
 end
 
 def play
