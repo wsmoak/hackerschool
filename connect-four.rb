@@ -57,15 +57,6 @@ def choose(player)
   end
 end
 
-# returns the index into the array, or nil if the position is not on the board
-def index (row, col)
-  if (0...ROWS).member? row
-    if (0...COLS).member? col
-      COLS*row + col
-    end
-  end
-end
-
 # returns a hash with the row, column and array index, or nil if the position is not on the board
 def position (r,c)
   if (0...ROWS).member? r
@@ -118,7 +109,6 @@ def find_column_match
 end
 
 def check_column
-  puts "Checking column"
   if winner? find_column_match then end_game end
 end
 
@@ -131,7 +121,6 @@ def find_forward_diagonal_match
 end
 
 def check_diagonals
-  puts "check_diagonals"
   if winner? find_backward_diagonal_match then end_game end
   if winner? find_forward_diagonal_match then end_game end
 end
