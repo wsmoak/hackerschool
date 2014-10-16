@@ -9,9 +9,16 @@
             };
             var context = canvas.getContext('2d');
 
+            drawCircle(context);
+        };
+
+    var drawCircle = function(context) {
             //see http://www.html5canvastutorials.com/tutorials/html5-canvas-circles/
+            //see http://www.tauday.com/tau-manifesto
+            var TAU = 2 * Math.PI;
             context.beginPath();
-            context.arc(150, 150, 10, 2 * Math.PI, false);
+            //see http://www.w3schools.com/tags/canvas_arc.asp
+            context.arc(150, 150, 10, 0, TAU);
             context.fillStyle = 'red';
             context.fill();
         };
