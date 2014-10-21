@@ -16,25 +16,26 @@
             drawGrid(context, gameSize, cols);
 
             canvas.addEventListener('click', function(event) {
-				// we don't care what row they clicked on, the game piece will drop to the lowest available row
-                var col = Math.ceil( event.pageX / (gameSize.x / cols));
-				var x = Math.ceil((col * 45) - (45/2)) // x position in middle of column
+
+                // we don't care what row they clicked on, the game piece will drop to the lowest available row
+                var height = Math.floor(gameSize.y / rows);
+                var width = Math.floor(gameSize.x / cols);
+                var col = Math.floor(event.pageX / width);
                 console.log("Clicked! " + event.pageX + " " + event.pageY + " in Column " + col);
-			    //# if row 0 for that column is filled in, prompt for a different column
-			    if ( false ) { 
-					console.log( "That column is full");
-				} else {
-					//find first empty row in that column
-					for( var i = rows; i > 0; i--) {
-						  var y = Math.ceil((i+1)*45 - (45/2)); // y position in middle of row
-						  console.log ("Getting image data for " + x + " " + y );
-						  var imageData = context.getImageData(x,y,1,1);
-						  console.log( "Image Data is " + imageData.data[0] + " " + imageData.data[1] );
-						  drawCircle(context, i, col, red);
-		                  red = !red
-						}
-					}
-				
+
+                var x = Math.floor((col * width) + (width / 2)) // x position in middle of column
+                //find first empty row in that column
+                for (var i = rows; i > 0; i--) {
+                    var y = Math.ceil((i) * height - (height / 2)); // y position in middle of row
+                    console.log("Getting image data for " + x + " " + y);
+                    var imageData = context.getImageData(x, y, 1, 1);
+                    console.log("Image Data is " + imageData.data[0] + " " + imageData.data[1] + " " + imageData.data[2] + " " + imageData.data[3]);
+                    if (imageData.data[3] === 0) { //if transparent meaning empty
+                        drawCircle(context, x, y, red);
+                        red = !red;
+                        break;
+                    } // end if
+                } //end for
             });
 
 
@@ -50,13 +51,14 @@
             }
         };
 
-    var drawCircle = function(context, row, col, red) {
+    var drawCircle = function(context, x, y, red) {
+            console.log("Drawing circle!");
             //see http://www.html5canvastutorials.com/tutorials/html5-canvas-circles/
             //see http://www.tauday.com/tau-manifesto
             var TAU = 2 * Math.PI;
             context.beginPath();
             //see http://www.w3schools.com/tags/canvas_arc.asp
-            context.arc(col * 45 - (45 / 2), row * 45 - (45 / 2), 10, 0, TAU);
+            context.arc(x, y, 10, 0, TAU);
             context.fillStyle = red ? 'red' : 'black';
             context.fill();
         };
