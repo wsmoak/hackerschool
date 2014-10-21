@@ -13,7 +13,8 @@
             };
             var context = canvas.getContext('2d');
 
-            drawGrid(context, gameSize, cols);
+            drawColumnGrid(context, gameSize, cols);
+            drawRowGrid(context, gameSize, rows);
 
             canvas.addEventListener('click', function(event) {
 
@@ -24,27 +25,40 @@
                 console.log("Clicked! " + event.pageX + " " + event.pageY + " in Column " + col);
 
                 var x = Math.floor((col * width) + (width / 2)) // x position in middle of column
-                //find first empty row in that column
-                for (var i = rows; i > 0; i--) {
-                    var y = Math.ceil((i) * height - (height / 2)); // y position in middle of row
-                    console.log("Getting image data for " + x + " " + y);
-                    var imageData = context.getImageData(x, y, 1, 1);
-                    console.log("Image Data is " + imageData.data[0] + " " + imageData.data[1] + " " + imageData.data[2] + " " + imageData.data[3]);
-                    if (imageData.data[3] === 0) { //if transparent meaning empty
-                        drawCircle(context, x, y, red);
-                        red = !red;
-                        break;
-                    } // end if
-                } //end for
+                //ignore click events that fall outside the width of the canvas (how does this happen?)
+                if (col >= 0 && col < cols) {
+                    //find first empty row in that column
+                    for (var i = rows; i > 0; i--) {
+                        var y = Math.ceil((i) * height - (height / 2)); // y position in middle of row
+                        // see http://www.w3schools.com/tags/canvas_getimagedata.asp
+                        var imageData = context.getImageData(x, y, 1, 1);
+                        console.log("Image Data for " + x + " " + y + " is " + imageData.data[0] + " " + imageData.data[1] + " " + imageData.data[2] + " " + imageData.data[3]);
+                        if (imageData.data[3] === 0) { //if transparent meaning the space is empty
+                            drawCircle(context, x, y, red);
+                            red = !red;
+                            break;
+                        } // end if
+                    } //end for
+                } //end if
             });
 
 
         };
 
-    var drawGrid = function(context, gameSize, cols) {
+    var drawColumnGrid = function(context, gameSize, cols) {
             var width = gameSize.x / cols;
             for (var i = 0; i < cols; i++) {
                 context.rect(i * width, 0, (i + 1) * width, gameSize.y);
+                context.strokeStyle = 'yellow';
+                context.lineWidth = '3';
+                context.stroke();
+            }
+        };
+
+    var drawRowGrid = function(context, gameSize, rows) {
+            var height = gameSize.y / rows;
+            for (var i = 0; i < rows; i++) {
+                context.rect(0, i * height, gameSize.x, (i + 1) * height);
                 context.strokeStyle = 'yellow';
                 context.lineWidth = '3';
                 context.stroke();
