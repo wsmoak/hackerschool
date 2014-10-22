@@ -1,8 +1,11 @@
+// Wendy Smoak | wsmoak@gmail.com | http:/wsmoak.net | October 2014
+// Connect Four game
+
 (function() {
     // see http://benalman.com/news/2010/11/immediately-invoked-function-expression/
     var Game = function(canvasId) {
-            var rows = 6;
-            var cols = 7;
+            var ROWS = 6;
+            var COLS = 7;
             var red = true;
 
             // see http://html5doctor.com/an-introduction-to-the-canvas-2d-api/
@@ -13,29 +16,31 @@
             };
             var context = canvas.getContext('2d');
 
-            drawColumnGrid(context, gameSize, cols);
-            drawRowGrid(context, gameSize, rows);
+            drawColumnGrid(context, gameSize, COLS);
+            drawRowGrid(context, gameSize, ROWS);
 
             canvas.addEventListener('click', function(event) {
+                var height = Math.floor(gameSize.y / ROWS);
+                var width = Math.floor(gameSize.x / COLS);
 
                 // we don't care what row they clicked on, the game piece will drop to the lowest available row
-                var height = Math.floor(gameSize.y / rows);
-                var width = Math.floor(gameSize.x / cols);
                 var col = Math.floor(event.pageX / width);
+
                 console.log("Clicked! " + event.pageX + " " + event.pageY + " in Column " + col);
 
                 var x = Math.floor((col * width) + (width / 2)) // x position in middle of column
+
                 //ignore click events that fall outside the width of the canvas (how does this happen?)
-                if (col >= 0 && col < cols) {
+                if (col >= 0 && col < COLS) {
                     //find first empty row in that column
-                    for (var i = rows; i > 0; i--) {
-                        var y = Math.ceil((i) * height - (height / 2)); // y position in middle of row
+                    for (var row = ROWS; row > 0; row--) {
+                        var y = Math.ceil((row * height) - (height / 2)); // y position in middle of row
                         // see http://www.w3schools.com/tags/canvas_getimagedata.asp
                         var imageData = context.getImageData(x, y, 1, 1);
                         console.log("Image Data for " + x + " " + y + " is " + imageData.data[0] + " " + imageData.data[1] + " " + imageData.data[2] + " " + imageData.data[3]);
                         if (imageData.data[3] === 0) { //if transparent meaning the space is empty
                             drawCircle(context, x, y, red);
-                            red = !red;
+                            red = !red;  //toggle player color true/false -> red/black
                             break;
                         } // end if
                     } //end for
