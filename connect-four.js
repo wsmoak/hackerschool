@@ -1,6 +1,5 @@
 // Wendy Smoak | wsmoak@gmail.com | http:/wsmoak.net | October 2014
 // Connect Four game
-
 (function() {
     // see http://benalman.com/news/2010/11/immediately-invoked-function-expression/
     var Game = function(canvasId) {
@@ -10,7 +9,7 @@
 
             // see http://html5doctor.com/an-introduction-to-the-canvas-2d-api/
             var canvas = document.getElementById(canvasId);
-			// see http://www.w3.org/TR/2dcontext/ 
+            // see http://www.w3.org/TR/2dcontext/ 
             var context = canvas.getContext('2d');
 
             drawColumnGrid(context, COLS);
@@ -26,7 +25,6 @@
                 console.log("Clicked! " + event.pageX + " " + event.pageY + " in Column " + col);
 
                 var x = Math.floor((col * columnWidth) + (columnWidth / 2)) // x position in middle of column
-
                 //ignore click events that fall outside the width of the canvas (how does this happen?)
                 if (col >= 0 && col < COLS) {
                     //find first empty row in that column
@@ -37,7 +35,7 @@
                         console.log("Image Data for " + x + " " + y + " is " + imageData.data[0] + " " + imageData.data[1] + " " + imageData.data[2] + " " + imageData.data[3]);
                         if (imageData.data[3] === 0) { //if transparent meaning the space is empty
                             drawCircle(context, x, y, red);
-                            red = !red;  //toggle player color true/false -> red/black
+                            red = !red; //toggle player color true/false -> red/black
                             break;
                         } // end if
                     } //end for
@@ -50,7 +48,7 @@
     var drawColumnGrid = function(context, cols) {
             var columnWidth = context.canvas.width / cols;
             for (var i = 0; i < cols; i++) {
-                context.rect(i * columnWidth, 0, columnWidth, context.canvas.height );
+                context.rect(i * columnWidth, 0, columnWidth, context.canvas.height);
                 context.strokeStyle = 'yellow';
                 context.lineWidth = '3';
                 context.stroke();
