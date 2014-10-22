@@ -10,31 +10,28 @@
 
             // see http://html5doctor.com/an-introduction-to-the-canvas-2d-api/
             var canvas = document.getElementById(canvasId);
-            var gameSize = {
-                x: canvas.width,
-                y: canvas.height
-            };
+			// see http://www.w3.org/TR/2dcontext/ 
             var context = canvas.getContext('2d');
 
-            drawColumnGrid(context, gameSize, COLS);
-            drawRowGrid(context, gameSize, ROWS);
+            drawColumnGrid(context, COLS);
+            drawRowGrid(context, ROWS);
 
             canvas.addEventListener('click', function(event) {
-                var height = Math.floor(gameSize.y / ROWS);
-                var width = Math.floor(gameSize.x / COLS);
+                var rowHeight = Math.floor(context.canvas.height / ROWS);
+                var columnWidth = Math.floor(context.canvas.width / COLS);
 
                 // we don't care what row they clicked on, the game piece will drop to the lowest available row
-                var col = Math.floor(event.pageX / width);
+                var col = Math.floor(event.pageX / columnWidth);
 
                 console.log("Clicked! " + event.pageX + " " + event.pageY + " in Column " + col);
 
-                var x = Math.floor((col * width) + (width / 2)) // x position in middle of column
+                var x = Math.floor((col * columnWidth) + (columnWidth / 2)) // x position in middle of column
 
                 //ignore click events that fall outside the width of the canvas (how does this happen?)
                 if (col >= 0 && col < COLS) {
                     //find first empty row in that column
                     for (var row = ROWS; row > 0; row--) {
-                        var y = Math.ceil((row * height) - (height / 2)); // y position in middle of row
+                        var y = Math.ceil((row * rowHeight) - (rowHeight / 2)); // y position in middle of row
                         // see http://www.w3schools.com/tags/canvas_getimagedata.asp
                         var imageData = context.getImageData(x, y, 1, 1);
                         console.log("Image Data for " + x + " " + y + " is " + imageData.data[0] + " " + imageData.data[1] + " " + imageData.data[2] + " " + imageData.data[3]);
@@ -50,20 +47,20 @@
 
         };
 
-    var drawColumnGrid = function(context, gameSize, cols) {
-            var width = gameSize.x / cols;
+    var drawColumnGrid = function(context, cols) {
+            var columnWidth = context.canvas.width / cols;
             for (var i = 0; i < cols; i++) {
-                context.rect(i * width, 0, (i + 1) * width, gameSize.y);
+                context.rect(i * columnWidth, 0, columnWidth, context.canvas.height );
                 context.strokeStyle = 'yellow';
                 context.lineWidth = '3';
                 context.stroke();
             }
         };
 
-    var drawRowGrid = function(context, gameSize, rows) {
-            var height = gameSize.y / rows;
+    var drawRowGrid = function(context, rows) {
+            var rowHeight = context.canvas.height / rows;
             for (var i = 0; i < rows; i++) {
-                context.rect(0, i * height, gameSize.x, (i + 1) * height);
+                context.rect(0, i * rowHeight, context.canvas.width, rowHeight);
                 context.strokeStyle = 'yellow';
                 context.lineWidth = '3';
                 context.stroke();
