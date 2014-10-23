@@ -80,18 +80,18 @@
             context.fill();
         };
 
-	    var checkBoard = function(context, x, y, red) {
-		    var columnWidth = context.canvas.width / COLS;
-		    var rowHeight = context.canvas.height / ROWS;
-
+        var findMatch = function(context, x, y, rowDirection, colDirection) {
 		    var count = 0;
 		    var lastMove = context.getImageData(x, y, 1, 1);
+    	  //console.log("Last Move is " + x + " " + y + " is " + lastMove.data[0] + " " + lastMove.data[1] + " " + lastMove.data[2] + " " + lastMove.data[3]);
 			xpos = x;
 			ypos = y;
 		    // look to the left and count matches
-			while ( xpos > 0) {
-                xpos -= columnWidth;
-		        var imageData = context.getImageData(xpos, y, 1, 1);
+			while ( xpos > 0 && xpos < context.canvas.width && ypos > 0 && ypos < context.canvas.height) {
+                xpos += colDirection;
+				ypos += rowDirection;
+		        var imageData = context.getImageData(xpos, ypos, 1, 1);
+                //console.log("Image Data for " + xpos + " " + ypos + " is " + imageData.data[0] + " " + imageData.data[1] + " " + imageData.data[2] + " " + imageData.data[3]);
 		        if (imageData.data[3] > 0 && //not transparent
 		           lastMove.data[0] === imageData.data[0] &&
 		           lastMove.data[1] === imageData.data[1] &&  //same color
@@ -101,7 +101,33 @@
 			       break;
 		        }
 		    } // end while
-		    console.log ( "Counted lefthand matches: " + count );
+		console.log ( "returning " + count );
+			return count;
+        };
+
+	    var checkBoard = function(context, x, y, red) {
+		    var columnWidth = Math.floor(context.canvas.width / COLS);
+		    var rowHeight = Math.floor(context.canvas.height / ROWS);
+
+			var LEFT = -columnWidth;
+			var RIGHT = columnWidth;
+			var UP = -rowHeight;
+			var DOWN = rowHeight;
+			var SAME = 0;
+
+			rowWin = findMatch(context,x,y,SAME,LEFT) + findMatch(context,x,y,SAME,RIGHT);
+		    console.log ( "Counted left and right matches: " + rowWin );
+
+		    colWin = findMatch(context,x,y,DOWN,SAME);
+		    console.log ( "Counted up and down matches: " + colWin );
+
+			backDiagWin = findMatch(context,x,y,UP,LEFT) + findMatch(context,x,y,DOWN,RIGHT);
+		    console.log ( "Counted back diagonal matches: " + backDiagWin );
+
+			fwdDiagWin = findMatch(context,x,y,UP,RIGHT) + findMatch(context,x,y,DOWN,LEFT);
+		    console.log ( "Counted fwd diagonal matches: " + fwdDiagWin );
+
+
         };
 
     window.onload = function() {
