@@ -16,6 +16,10 @@
             drawRowGrid(context, ROWS);
 
             canvas.addEventListener('click', function(event) {
+
+                // console.log( "the event is..." + event ); //says MouseEvent
+                // but https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent doesn't have pageX
+
                 var rowHeight = Math.floor(context.canvas.height / ROWS);
                 var columnWidth = Math.floor(context.canvas.width / COLS);
 
