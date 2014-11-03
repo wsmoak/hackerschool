@@ -123,7 +123,7 @@
             } else if (1 + findMatch(context, x, y, UP, RIGHT) + findMatch(context, x, y, DOWN, LEFT) >= 4) {
                 console.log("Forward diagonal win!");
             }
-            // TODO:  detect a tie if the last move was on the top row and was not a winning move
+            // TODO:  detect a tie if the last move was on the top row, the top row is full, and it and was not a winning move
         };
 
     window.onload = function() {
